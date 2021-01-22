@@ -12,21 +12,19 @@ def main():
     PARSER = argparse.ArgumentParser()
 
     PARSER.add_argument('--input_path', '-i', type=str,
-                        help=('Existing Excel file with a list of all the folders containing DICOMS'
-                              ' that will be used for training the network.'))
+                        help=('This can be either an existing Excel file with a list of all the '
+                              'folders containing DICOMS (one subject in each row) or an existing '
+                              'directory with one subject in each sub-folder.'))
     PARSER.add_argument('--root_path', '-r', type=str, default='',
-                        help=('Path that has to be appended to all the folders in the input_file.'))
+                        help=('If an Excel sheet is provided as input, this is the path that '
+                              'would be appended to all the folders in each row. Default is empty.'))
     PARSER.add_argument('--work_dir', '-w', type=str,
                         help=('Directory where to store the results.'))
     PARSER.add_argument('--weights', nargs='+', type=str, default=None,
                         help=('Path to the CNN weights to be used for the inference '
-                              ' More than one weight can be used, in that case the average '
-                              'prediction will be returned.'))
-    PARSER.add_argument('--evaluate', action='store_true',
-                        help=('If ground truth lung masks are available, the result of the '
-                              'segmentation can be tested against them. In this case, both '
-                              'Dice score and Hausdorff distance will be calculated. '
-                              'Default is False.'))
+                              ' More than one weight can be used, in that case the median '
+                              'prediction will be returned. If not provided, they will be '
+                              'downloaded from our server'))
 
     ARGS = PARSER.parse_args()
 
@@ -91,8 +89,7 @@ def main():
     elif not WEIGHTS:
         LOGGER.error('No weights file found in %s. Probably something went wrong '
                      'during the download. Try to download them directly from %s '
-                     'and store them in the "weights" folder within the '
-                     'lung_segmentation directory.', WEIGHTS_DIR, WEIGHTS_URL)
+                     'and provide them as input with --weights.', WEIGHTS_DIR, WEIGHTS_URL)
         raise Exception('No weight files found!')
 
     if not os.path.isdir(BIN_DIR):
@@ -122,8 +119,6 @@ def main():
     INFERENCE.create_tensors()
     INFERENCE.run_inference(weights=WEIGHTS)
     INFERENCE.save_inference(cluster_correction=CLUSTER_CORRECTION)
-    if ARGS.evaluate:
-        INFERENCE.run_evaluation()
 
     print('Done!')
 
