@@ -8,7 +8,7 @@ from lung_segmentation.configuration import (
     STANDARD_CONFIG, HIGH_RES_CONFIG, HUMAN_CONFIG)
 
 
-if __name__ == "__main__":
+def main():
 
     PARSER = argparse.ArgumentParser()
 
@@ -94,6 +94,7 @@ if __name__ == "__main__":
 
     LOGGER = create_log(LOG_DIR)
 
+    print(WEIGHTS_DIR)
     if ARGS.weights is None and WEIGHTS_URL is not None:
         if not os.path.isdir(WEIGHTS_DIR):
             LOGGER.info('No pre-trained network weights, I will try to download them.')
@@ -174,4 +175,10 @@ if __name__ == "__main__":
     if ARGS.evaluate:
         INFERENCE.run_evaluation()
 
-print('Done!')
+    print('Done!')
+
+
+if __name__ == "__main__":
+
+    main()
+

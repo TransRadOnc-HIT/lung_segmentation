@@ -9,7 +9,7 @@ from lung_segmentation.utils import create_log
 from lung_segmentation.training import LungSegmentationTraining
 
 
-if __name__ == "__main__":
+def main():
 
     PARSER = argparse.ArgumentParser()
 
@@ -100,4 +100,10 @@ if __name__ == "__main__":
     elif ARGS.pre_processing_only and ARGS.create_tensors:
         WORKFLOW.create_tensors()
 
-LOGGER.info('Everything is done!')
+    LOGGER.info('Everything is done!')
+
+
+if __name__ == "__main__":
+
+    main()
+

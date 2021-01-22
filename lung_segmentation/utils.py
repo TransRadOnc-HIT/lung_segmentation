@@ -2,6 +2,7 @@ import requests
 import tarfile
 import os
 import sys
+from pathlib import Path
 from datetime import datetime
 import logging
 import shutil
@@ -142,12 +143,14 @@ def untar(fname):
 def create_log(log_dir):
 
     now = datetime.now()
-    dt_string = now.strftime("%d-%m-%Y_%H:%M:%S")
+    dt_string = now.strftime("%d-%m-%Y_%H_%M_%S")
     logger = logging.getLogger('lungs_segmentation')
     logger.setLevel(logging.DEBUG)
     # create file handler which logs even debug messages
-    fh = logging.FileHandler(os.path.join(
-        log_dir, 'lungs_segmentation_{}.log'.format(dt_string)))
+    log_file = os.path.join(
+        log_dir, 'lungs_segmentation_{}.log'.format(dt_string))
+    # Path(log_file).touch()
+    fh = logging.FileHandler(log_file)
     fh.setLevel(logging.DEBUG)
     # create console handler with a higher log level
     ch = logging.StreamHandler()

@@ -12,7 +12,7 @@ pkgs = ['Keras==2.2.4',
 	'pandas==0.25.0',
 	'xlrd==1.1.0',
 	'medpy==0.4.0',
-	'pysimplegui==4.5.0']
+        'h5py==2.10.0']
 
 pkgs.append('tensorflow==1.13.1')
 # pkgs.append('tf-nightly-gpu==1.13.0.dev20190129')
@@ -20,13 +20,16 @@ pkgs.append('tensorflow==1.13.1')
 setup(name='lung_segmentation',
       version='1.0',
       description='Application to segment lungs using Deep Learning',
-      url='https://github.com/sforazz/lung_segmentation.git',
+      url='https://github.com/TransRadOnc-HIT/lung_segmentation.git',
       python_requires='>=3.5',
       author='Francesco Sforazzini',
       author_email='f.sforazzini@dkfz.de',
       license='Apache 2.0',
       zip_safe=False,
       install_requires=pkgs,
+      entry_points={
+          'console_scripts': ['run_lung_segmentation = scripts.run_inference:main',
+			      'run_segmentation_training = scripts.run_training:main']},
       packages=find_packages(exclude=['*.tests', '*.tests.*', 'tests.*', 'tests']),
       classifiers=[
           'Intended Audience :: Science/Research',
