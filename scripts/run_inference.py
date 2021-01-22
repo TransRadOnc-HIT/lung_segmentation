@@ -94,7 +94,6 @@ def main():
 
     LOGGER = create_log(LOG_DIR)
 
-    print(WEIGHTS_DIR)
     if ARGS.weights is None and WEIGHTS_URL is not None:
         if not os.path.isdir(WEIGHTS_DIR):
             LOGGER.info('No pre-trained network weights, I will try to download them.')

@@ -15,7 +15,7 @@ pkgs = ['Keras==2.2.4',
         'h5py==2.10.0']
 
 pkgs.append('tensorflow==1.13.1')
-# pkgs.append('tf-nightly-gpu==1.13.0.dev20190129')
+# pkgs.append('tensorflow-gpu==1.15')
 
 setup(name='lung_segmentation',
       version='1.0',

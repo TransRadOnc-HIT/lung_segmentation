@@ -22,13 +22,13 @@ class LungSegmentationInference(LungSegmentationBase):
         "Function to get the data for the prediction"
         self.testing = True
         self.predicted_images = []
-        if (os.path.isdir(os.path.join(self.work_dir, 'testing'))
-                and os.path.isfile(os.path.join(self.work_dir, 'testing', 'test_subjects.txt'))
-                and os.path.isfile(os.path.join(self.work_dir, 'testing',
+        if (os.path.isdir(os.path.join(self.work_dir, 'inference'))
+                and os.path.isfile(os.path.join(self.work_dir, 'inference', 'test_subjects.txt'))
+                and os.path.isfile(os.path.join(self.work_dir, 'inference',
                                                 'test_subjects_gt_masks.txt'))):
-            with open(os.path.join(self.work_dir, 'testing', 'test_subjects.txt'), 'r') as f:
+            with open(os.path.join(self.work_dir, 'inference', 'test_subjects.txt'), 'r') as f:
                 self.dcm_folders = [x.strip() for x in f]
-            with open(os.path.join(self.work_dir, 'testing',
+            with open(os.path.join(self.work_dir, 'inference',
                                    'test_subjects_gt_masks.txt'), 'r') as f:
                 self.mask_paths = [x.strip() for x in f]
         elif os.path.isfile(self.input_path):
@@ -46,7 +46,7 @@ class LungSegmentationInference(LungSegmentationBase):
             LOGGER.info('Found {0} sub-folders in {1}. They will be used to run the inference.'
                         .format(len(self.dcm_folders), str(input_dir)))
 
-        self.work_dir = os.path.join(str(self.work_dir), 'testing')
+        self.work_dir = os.path.join(str(self.work_dir), 'inference')
 
     def create_tensors(self, patch_size=(96, 96), save2npy=False):
         "Function to create the tensors for the prediction"

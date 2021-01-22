@@ -1,0 +1,7 @@
+*.pyc
+*.*project
+*.*egg*.*
+build/
+lung_segmentation.egg-info/
+dist/
+src/
