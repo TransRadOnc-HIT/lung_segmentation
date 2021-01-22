@@ -4,8 +4,7 @@ import argparse
 import glob
 from lung_segmentation.utils import create_log, untar, get_files
 from lung_segmentation.inference import LungSegmentationInference
-from lung_segmentation.configuration import (
-    STANDARD_CONFIG, HIGH_RES_CONFIG, HUMAN_CONFIG)
+from lung_segmentation.configuration import STANDARD_CONFIG
 
 
 def main():
@@ -19,40 +18,10 @@ def main():
                         help=('Path that has to be appended to all the folders in the input_file.'))
     PARSER.add_argument('--work_dir', '-w', type=str,
                         help=('Directory where to store the results.'))
-    PARSER.add_argument('--configuration', '-c', type=str,
-                        choices=['standard', 'highres', 'human', 'custom'], default='standard',
-                        help=('Configuation to use based on your data. See documentation for '
-                              'more help. Default is "standard".'))
-    PARSER.add_argument('--min-extent', type=int, default=350,
-                        help=('Minimum lung extension (in voxels) that will be used to '
-                              'run the final correction after the inference. For mouse acquired '
-                              'with clinical CT, 350 should be enough, while for micro-CT or human '
-                              'data this should be set to 100000-300000. Default is 350.'))
-    PARSER.add_argument('--dcm-check', '-dc', action='store_true',
-                        help=('Whether or not to carefully check the DICOM header. '
-                              'This check is based on our data and might too stringent for other'
-                              ' dataset, so you might want to turn it off. If you turn it off, '
-                              'please make sure that the DICOM data are correct. '
-                              'Default is False.'))
-    PARSER.add_argument('--spacing', '-s', nargs='+', type=float, default=None,
-                        help=('New spacing for the resampled images after pre-processing. '
-                              'Need to be a list of 3 values. Default is None, so no '
-                              'resampling'))
     PARSER.add_argument('--weights', nargs='+', type=str, default=None,
                         help=('Path to the CNN weights to be used for the inference '
                               ' More than one weight can be used, in that case the average '
                               'prediction will be returned.'))
-    PARSER.add_argument('--cluster-correction', '-cc', action='store_true',
-                        help=('Whether or not to apply cluster correction to the final segmented '
-                              'image. This should be turned on when segmenting human or high res '
-                              'mouse data. If not provided, the segmented mask will be thresholded '
-                              'based on the Otsu threshold. If provided, take also a look to the '
-                              '--min-extent argument since it is used to choose the cluster '
-                              'dimension. Default is False.'))
-    PARSER.add_argument('--accurate-naming', '-a', action='store_true',
-                        help=('Whether or not to name the cropped mouse accurately. This is considered '
-                              'only for mouse acquired with clinical scan and cropped automatically. '
-                              'Default is False.'))
     PARSER.add_argument('--evaluate', action='store_true',
                         help=('If ground truth lung masks are available, the result of the '
                               'segmentation can be tested against them. In this case, both '
@@ -66,25 +35,12 @@ def main():
     WEIGHTS_DIR = os.path.join(PARENT_DIR, 'weights/')
     BIN_URL = 'https://angiogenesis.dkfz.de/oncoexpress/software/delineation/bin/bin.tar.gz'
 
-    if ARGS.configuration == 'custom':
-        DEEP_CHECK = ARGS.dcm_check
-        NEW_SPACING = ARGS.spacing
-        MIN_EXTENT = ARGS.min_extent
-        CLUSTER_CORRECTION = ARGS.cluster_correction
-        WEIGHTS_URL = None
-    else:
-        if ARGS.configuration == 'standard':
-            CONFIG = STANDARD_CONFIG
-        elif ARGS.configuration == 'highres':
-            CONFIG = HIGH_RES_CONFIG
-        elif ARGS.configuration == 'human':
-            CONFIG = HUMAN_CONFIG
+    CONFIG = STANDARD_CONFIG
 
-        DEEP_CHECK = CONFIG['dicom_check']
-        NEW_SPACING = CONFIG['spacing']
-        MIN_EXTENT = CONFIG['min_extent']
-        CLUSTER_CORRECTION = CONFIG['cluster_correction']
-        WEIGHTS_URL = CONFIG['weights_url']
+    DEEP_CHECK = CONFIG['dicom_check']
+    NEW_SPACING = CONFIG['spacing']
+    CLUSTER_CORRECTION = CONFIG['cluster_correction']
+    WEIGHTS_URL = CONFIG['weights_url']
 
     os.environ['bin_path'] = BIN_DIR
 
@@ -157,20 +113,15 @@ def main():
     LOGGER.info('Input path: %s', ARGS.input_path)
     LOGGER.info('Working directory: %s', ARGS.work_dir)
     LOGGER.info('Root path: %s', ARGS.root_path)
-    LOGGER.info('DICOM check: %s', DEEP_CHECK)
     LOGGER.info('New spacing: %s', NEW_SPACING)
     LOGGER.info('Weight files: \n%s', '\n'.join([x for x in sorted(WEIGHTS)]))
-    LOGGER.info('Cluster correction: %s', CLUSTER_CORRECTION)
-    if CLUSTER_CORRECTION:
-        LOGGER.info('Minimum extent: %s', MIN_EXTENT)
-    LOGGER.info('Evaluation: %s', ARGS.evaluate)
 
     INFERENCE = LungSegmentationInference(ARGS.input_path, ARGS.work_dir, deep_check=DEEP_CHECK)
     INFERENCE.get_data(root_path=ARGS.root_path)
-    INFERENCE.preprocessing(new_spacing=NEW_SPACING, accurate_naming=ARGS.accurate_naming)
+    INFERENCE.preprocessing(new_spacing=NEW_SPACING, accurate_naming=False)
     INFERENCE.create_tensors()
     INFERENCE.run_inference(weights=WEIGHTS)
-    INFERENCE.save_inference(min_extent=MIN_EXTENT, cluster_correction=CLUSTER_CORRECTION)
+    INFERENCE.save_inference(cluster_correction=CLUSTER_CORRECTION)
     if ARGS.evaluate:
         INFERENCE.run_evaluation()
 
