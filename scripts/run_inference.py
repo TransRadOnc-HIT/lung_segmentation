@@ -48,9 +48,15 @@ def main():
 
     LOGGER = create_log(LOG_DIR)
 
+    WEIGHTS = []
+    for path, _, files in os.walk(PARENT_DIR):
+        for f in files:
+            if '.h5' in f:
+                WEIGHTS.append(os.path.join(path, f))
+
     if ARGS.weights is None and WEIGHTS_URL is not None:
-        if not os.path.isdir(WEIGHTS_DIR):
-            LOGGER.info('No pre-trained network weights, I will try to download them.')
+        if not WEIGHTS:
+            LOGGER.info('No pre-trained network weights, lets try to download them.')
             try:
                 TAR_FILE = get_files(WEIGHTS_URL, PARENT_DIR, 'weights')
                 untar(TAR_FILE)
@@ -62,7 +68,6 @@ def main():
         else:
             LOGGER.info('Pre-trained network weights found in %s', WEIGHTS_DIR)
 
-        WEIGHTS = [w for w in sorted(glob.glob(os.path.join(WEIGHTS_DIR, '*.h5')))]
         DOWNLOADED = True
     elif ARGS.weights is not None:
         WEIGHTS = ARGS.weights
@@ -94,7 +99,7 @@ def main():
 
     if not os.path.isdir(BIN_DIR):
         LOGGER.info('No directory containing the binary executables found. '
-                    'I will try to download it from the repository.')
+                    'They will be downloaded from the repository.')
         try:
             TAR_FILE = get_files(BIN_URL, PARENT_DIR, 'bin')
             untar(TAR_FILE)
