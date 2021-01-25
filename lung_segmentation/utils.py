@@ -128,9 +128,9 @@ def get_files(url, location, file, ext='.tar.gz'):
     return os.path.join(location, file+ext)
 
 
-def untar(fname):
+def untar(fname, folder_name, move_weights=False):
 
-    untar_dir = os.path.split(fname)[0]
+    untar_dir = os.path.join(os.path.split(fname)[0], folder_name)
     if fname.endswith("tar.gz"):
         tar = tarfile.open(fname)
         tar.extractall(path=untar_dir)
@@ -138,6 +138,16 @@ def untar(fname):
         print("Extracted in Current Directory")
     else:
         print("Not a tar.gz file: {}".format(fname))
+    if move_weights:
+        weights = []
+        for path, _, files in os.walk(untar_dir):
+            for f in files:
+                if '.h5' in f:
+                    weights.append(os.path.join(path, f))
+        if weights:
+            for w in weights:
+                if os.path.split(w)[0] != untar_dir:
+                    shutil.move(w, untar_dir)
 
 
 def create_log(log_dir):
