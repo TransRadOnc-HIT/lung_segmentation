@@ -25,6 +25,12 @@ def main():
                               ' More than one weight can be used, in that case the median '
                               'prediction will be returned. If not provided, they will be '
                               'downloaded from our server'))
+    PARSER.add_argument('--evaluate', action='store_true',
+                        help=('If ground truth lung masks are available (i.e., the "masks" column was '
+                              'provided in the Excel sheet used as input), the result of the '
+                              'segmentation can be tested against them. In this case, both '
+                              'Dice score and Hausdorff distance will be calculated. '
+                              'Default is False.'))
 
     ARGS = PARSER.parse_args()
 
@@ -35,7 +41,11 @@ def main():
 
     CONFIG = STANDARD_CONFIG
 
+# DEEP_CHECK checks some information in the DICOM header of the CTs. This is based on our images
+# so if you get errors related to missing DICOM field, just uncomment DEEP_CHECK = False below
+# to ignore this check. This can happen because the check is too stringent for your data.
     DEEP_CHECK = CONFIG['dicom_check']
+#    DEEP_CHECK = False # uncomment this if you get errors related to some missing DICOM field
     NEW_SPACING = CONFIG['spacing']
     CLUSTER_CORRECTION = CONFIG['cluster_correction']
     WEIGHTS_URL = CONFIG['weights_url']
@@ -120,6 +130,8 @@ def main():
     INFERENCE.create_tensors()
     INFERENCE.run_inference(weights=WEIGHTS)
     INFERENCE.save_inference(cluster_correction=CLUSTER_CORRECTION)
+    if ARGS.evaluate:
+        INFERENCE.run_evaluation()
 
     print('Done!')
 
