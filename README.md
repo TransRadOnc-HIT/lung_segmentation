@@ -4,13 +4,14 @@ This repository contains a deep learning application to segment lungs from CT im
 # Installation
 Currently, this application is only supported for Linux (developped and tested on Ubuntu 18.04) operative system, because it needs some executables that are build on this OS. It works with python 3x.
 To install it, follow the following steps:
-- Clone or download this repository.
+- Clone or download this repository, `git clone https://github.com/TransRadOnc-HIT/lung_segmentation.git`.
 - Open a terminal and cd into it (`cd lung_segmentation`, if the repository is in the current directory)
-- (Optional) create a python virtual environment (for example `virtualenv venv`). For more information about virtualenv please refer to [this web page](https://virtualenv.pypa.io/en/latest/). Anaconda can be used as well.
-- (Optional) activate the just created virtualenv `source venv/bin/activate`
+- (Optional) Create a Python virtual environment. With [anaconda](https://www.anaconda.com/) this can be done by typing `conda create -n lung_seg python=3.7`. 
+Python virtualenv should work as well (For more information about virtualenv please refer to [this web page](https://virtualenv.pypa.io/en/latest/).
+- (Optional) activate the just created conda environment `conda activate lung_seg`
 - By default, the CPU version of Tensorflow will be installed using the setup.py. However, if you have GPU availablility, you can open the setup.py file, comment the line where is specified the tensorflow package and uncomment the one with the GPU version (used during development). Then save and close the file.
 - Type: `python setup.py install`
-- The last step will install two bash commands: `run_lung_segmentation` and `run_segmentation_training`
+- The last step will install one bash command: `run_lung_segmentation`
 
 # Command line script usage
 For a very basic usage of the lung segmentation application, from command line, you just need to type:
@@ -42,6 +43,6 @@ input_path
 ```
 To see an example please download the test data from [here](insert link)
 2) If you provide an Excel sheet in `--input_path` then each row has to contain the path to a folder contain one CT image. The first row must contain the word "subjects" in order to be found by the data loader.
-Optionally, when you use an Excel sheet as input and ONLY if you have ground truth lung mask (for example you trained the network from scratch and you want to test it), you can provide a second column with the path the folder containing the lung masks corresponding to the CT image. The two columns must have the same number of entries. The mask folder must have as many .nrrd files as the number of subjects (mice or humans) in the corresponding CT image. If for example. there are 4 mice in one CT image, then the mask folder must contain 4 .nrrd lung masks. Have a look in the test data folder for one example of Excel sheet.
+Optionally, when you use an Excel sheet as input and ONLY if you have ground truth lung mask (for example you trained the network from scratch and you want to test it), you can provide a second column (the first row must contain the word "masks") with the path the folder containing the lung masks corresponding to the CT image. The two columns must have the same number of entries. The mask folder must have as many .nrrd files as the number of subjects (mice or humans) in the corresponding CT image. If for example there are 4 mice in one CT image, then the mask folder must contain 4 .nrrd lung masks. Have a look in the test data folder for one example of Excel sheet (called "Example_excel_input_with_masks.xlsx").
 # Results
 Right now, you will get a folder for each sub-folder in the input directory (CT_1, CT_2 in the structure above). Each folder will contain one NRRD file per mouse with the corresponding lung mask. For example, if there were 4 mice in CT_1, you will get folder called 'CT_1' in the `--work_dir` containing 4 NRRD files (named basename_cropped_mouse_\*.nrrd) with the cropped mouse data, and 4 NRRD files with the corresponding segmented lungs (named basename_cropped_mouse_\*_lung_seg.nrrd). There will be other files with information about the coordinates used for cropping. Those are planned to be used to convert the individual NRRD segmentation back to DICOM but this functionality is not implemented yet. They can be ignored for now.
