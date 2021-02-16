@@ -23,7 +23,11 @@ The application will try to automatically download the pre-trained network weigh
 By default, the application will run a 5-folds cross validation inference using 5 different weights files and at the end it will calculate the average prediction in order to provide the best segmentation.
 This application has been built to automatically crop the individual DICOM CT image (CT_1 in the example below) in order to have one mouse per image. So if you acquired your clinical mouse CT data in batches of more than 1 mouse this application should take care of it automatically. If you have one mouse per image, the cropping will simply remove part of the background.
 All the log files will be stored in the `logs` directory. If something went wrong, you should find more information there.
-
+To run a simple test using the data downloaded from our webserver (here), you can use the following command from terminal (assuming you are in the folder where you downloaded the test data):
+```
+run_lung_segmentation --input_path test_data/Example_excel_input_with_masks.xlsx --work_dir test_output --root_path test_data
+```
+if you want to run the evaluation with respect of the ground truth masks (i.e., calculate both Dice score and Hausdorff distance), just add `--evaluate` at the previous command.
 # Input data structure
 1) If you provide a folder in `--input_path` then its structure needs to be as described below:
 ```
