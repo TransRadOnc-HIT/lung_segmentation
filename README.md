@@ -23,7 +23,7 @@ The application will try to automatically download the pre-trained network weigh
 By default, the application will run a 5-folds cross validation inference using 5 different weights files and at the end it will calculate the average prediction in order to provide the best segmentation.
 This application has been built to automatically crop the individual DICOM CT image (CT_1 in the example below) in order to have one mouse per image. So if you acquired your clinical mouse CT data in batches of more than 1 mouse this application should take care of it automatically. If you have one mouse per image, the cropping will simply remove part of the background.
 All the log files will be stored in the `logs` directory. If something went wrong, you should find more information there.
-To run a simple test using the data downloaded from our webserver ([here](www.oncoexpress.de/software/delineation/bin/test_data.tar.gz)), you can use the following command from terminal (assuming you are in the folder where you downloaded the test data):
+To run a simple test using the data downloaded from our webserver ([here](https://angiogenesis.dkfz.de/oncoexpress/software/delineation/bin/test_data.tar.gz)), you can use the following command from terminal (assuming you are in the folder where you downloaded the test data):
 ```
 run_lung_segmentation --input_path test_data/Example_excel_input_with_masks.xlsx --work_dir test_output --root_path test_data
 ```
@@ -45,7 +45,7 @@ input_path
     .
     .
 ```
-To see an example please download the test data from [here](www.oncoexpress.de/software/delineation/bin/test_data.tar.gz).
+To see an example please download the test data from [here](https://angiogenesis.dkfz.de/oncoexpress/software/delineation/bin/test_data.tar.gz).
 2) If you provide an Excel sheet in `--input_path` then each row has to contain the path to a folder contain one CT image. The first row must contain the word "subjects" in order to be found by the data loader.
 Optionally, when you use an Excel sheet as input and ONLY if you have ground truth lung mask (for example you trained the network from scratch and you want to test it), you can provide a second column (the first row must contain the word "masks") with the path the folder containing the lung masks corresponding to the CT image. The two columns must have the same number of entries. The mask folder must have as many .nrrd files as the number of subjects (mice or humans) in the corresponding CT image. If for example there are 4 mice in one CT image, then the mask folder must contain 4 .nrrd lung masks. Have a look in the test data folder for one example of Excel sheet (called "Example_excel_input_with_masks.xlsx").
 # Results
