@@ -34,7 +34,11 @@ def main():
 
     ARGS = PARSER.parse_args()
 
-    PARENT_DIR = os.path.abspath(os.path.join(os.path.split(__file__)[0], os.pardir))
+#     PARENT_DIR = os.path.abspath(os.path.join(os.path.split(__file__)[0], os.pardir))
+    home_dir = os.path.expanduser("~")                                                                                                                                                                 
+    PARENT_DIR = os.path.join(home_dir, '.lung_segmentation')
+    if not os.path.isdir(PARENT_DIR):
+        os.makedirs(PARENT_DIR)
     BIN_DIR = os.path.join(PARENT_DIR, 'bin/')
     WEIGHTS_DIR = os.path.join(PARENT_DIR, 'weights/')
     BIN_URL = 'https://angiogenesis.dkfz.de/oncoexpress/software/delineation/bin/bin.tar.gz'
@@ -49,6 +53,7 @@ def main():
     NEW_SPACING = CONFIG['spacing']
     CLUSTER_CORRECTION = CONFIG['cluster_correction']
     WEIGHTS_URL = CONFIG['weights_url']
+    MIN_EXTENT = CONFIG['min_extent']
 
     os.environ['bin_path'] = BIN_DIR
 
@@ -129,7 +134,7 @@ def main():
     INFERENCE.preprocessing(new_spacing=NEW_SPACING, accurate_naming=False)
     INFERENCE.create_tensors()
     INFERENCE.run_inference(weights=WEIGHTS)
-    INFERENCE.save_inference(cluster_correction=CLUSTER_CORRECTION)
+    INFERENCE.save_inference(cluster_correction=CLUSTER_CORRECTION, min_extent=MIN_EXTENT)
     if ARGS.evaluate:
         INFERENCE.run_evaluation()
 
@@ -139,4 +144,3 @@ def main():
 if __name__ == "__main__":
 
     main()
-

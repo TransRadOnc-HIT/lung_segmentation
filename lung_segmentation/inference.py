@@ -132,6 +132,10 @@ class LungSegmentationInference(LungSegmentationBase):
 
     def run_evaluation(self):
         "Function to evaluate the segmentation w.r.t. a ground truth"
+#         for mask in self.preprocessed_masks:
+#             bp, name = os.path.split(mask)
+#             im_name = 'Raw_data_for_'+name.split('.nrrd')[0]+'_lung_segmented.nrrd'
+#             self.predicted_images.append(os.path.join(bp, im_name))
         assert len(self.predicted_images) == len(self.preprocessed_masks)
         all_dsc = []
         all_hd = []
